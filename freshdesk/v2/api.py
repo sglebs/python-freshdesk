@@ -618,7 +618,7 @@ class SolutionFolderAPI(object):
             for r in folders:
                 yield SolutionFolder(**r)
             page_number += 1
-            if len(articles)== 0:
+            if len(folders)== 0:
                 break
 
     def list_from_category_translated(self, category_id, lang_code):
