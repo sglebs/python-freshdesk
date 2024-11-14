@@ -611,9 +611,15 @@ class SolutionFolderAPI(object):
         self._api = api
 
     def list_from_category(self, category_id):
-        url = "solutions/categories/%d/folders" % category_id
-        folders = self._api._get(url)
-        return [SolutionFolder(**r) for r in folders]
+        page_number = 1
+        while True:
+            url = "solutions/categories/%d/folders?page=%d" % (category_id, page_number)
+            folders = self._api._get(url)
+            for r in folders:
+                yield SolutionFolder(**r)
+            page_number += 1
+            if len(articles)== 0:
+                break
 
     def list_from_category_translated(self, category_id, lang_code):
         url = "solutions/categories/%d/folders/%s" % (category_id, lang_code)
