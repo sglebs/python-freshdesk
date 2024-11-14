@@ -669,7 +669,7 @@ class SolutionArticleAPI(object):
     def list_from_folder(self, id):
         page_number = 1
         while True:
-            url = "solutions/folders/%d/articles&page=%d" % (id, page_number)
+            url = "solutions/folders/%d/articles?page=%d" % (id, page_number)
             articles = self._api._get(url)
             for a in articles:
                 yield SolutionArticle(**a)
