@@ -667,9 +667,15 @@ class SolutionArticleAPI(object):
         return SolutionArticle(**self._api._get(url))
 
     def list_from_folder(self, id):
-        url = "solutions/folders/%d/articles" % id
-        articles = self._api._get(url)
-        return [SolutionArticle(**a) for a in articles]
+        page_number = 1
+        while True:
+            url = "solutions/folders/%d/articles&page=%d" % (id, page_number)
+            articles = self._api._get(url)
+            for a in articles:
+                yield SolutionArticle(**a)
+            page_number += 1
+            if len(articles)== 0:
+                break
 
     def list_from_folder_translated(self, id, language_code):
         url = "solutions/folders/%d/articles/%s" % (id, language_code)
