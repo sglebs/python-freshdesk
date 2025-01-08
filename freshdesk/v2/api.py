@@ -610,6 +610,17 @@ class SolutionFolderAPI(object):
     def __init__(self, api):
         self._api = api
 
+    def list_subfolders(self, folder_id): # MQM this API did not exist
+        page_number = 1
+        while True:
+            url = "solutions/folders/%d/subfolders?page=%d" % (folder_id, page_number)
+            folders = self._api._get(url)
+            for r in folders:
+                yield SolutionFolder(**r)
+            page_number += 1
+            if len(folders)== 0:
+                break
+
     def list_from_category(self, category_id):
         page_number = 1
         while True:
