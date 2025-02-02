@@ -806,21 +806,43 @@ class API(object):
 
     def _get(self, url, params={}):
         """Wrapper around request.get() to use the API prefix. Returns a JSON response."""
-        req = self._session.get(self._api_prefix + url, params=params)
-        return self._action(req)
+        try:
+            req = self._session.get(self._api_prefix + url, params=params)
+            return self._action(req)
+        except requests.exceptions.ConnectionError as ce: # MQM: retry just once
+            self._session.close() # https://community.openai.com/t/connection-error-when-trying-to-call-the-api-every-x-minutes/361064/5
+            req = self._session.get(self._api_prefix + url, params=params)
+            return self._action(req)
+
 
     def _post(self, url, data={}, **kwargs):
         """Wrapper around request.post() to use the API prefix. Returns a JSON response."""
-        req = self._session.post(self._api_prefix + url, data=data, **kwargs)
-        return self._action(req)
+        try:
+            req = self._session.post(self._api_prefix + url, data=data, **kwargs)
+            return self._action(req)
+        except requests.exceptions.ConnectionError as ce: # MQM: retry just once
+            self._session.close() # https://community.openai.com/t/connection-error-when-trying-to-call-the-api-every-x-minutes/361064/5
+            req = self._session.post(self._api_prefix + url, data=data, **kwargs)
+            return self._action(req)
 
     def _put(self, url, data={}):
         """Wrapper around request.put() to use the API prefix. Returns a JSON response."""
-        req = self._session.put(self._api_prefix + url, data=data)
-        return self._action(req)
+        try:
+            req = self._session.put(self._api_prefix + url, data=data)
+            return self._action(req)
+        except requests.exceptions.ConnectionError as ce: # MQM: retry just once
+            self._session.close() # https://community.openai.com/t/connection-error-when-trying-to-call-the-api-every-x-minutes/361064/5
+            req = self._session.put(self._api_prefix + url, data=data)
+            return self._action(req)
 
     def _delete(self, url):
         """Wrapper around request.delete() to use the API prefix. Returns a JSON response."""
-        req = self._session.delete(self._api_prefix + url)
-        print(req)
-        return self._action(req)
+        try:
+            req = self._session.delete(self._api_prefix + url)
+            # print(req)
+            return self._action(req)
+        except requests.exceptions.ConnectionError as ce: # MQM: retry just once
+            self._session.close() # https://community.openai.com/t/connection-error-when-trying-to-call-the-api-every-x-minutes/361064/5
+            req = self._session.delete(self._api_prefix + url)
+            # print(req)
+            return self._action(req)
